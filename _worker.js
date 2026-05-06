@@ -3698,30 +3698,22 @@ function Clash订阅配置文件热补丁(Clash_原始订阅内容, config_JSON 
 	const gRPCUserAgentYAML = gRPCUserAgent ? JSON.stringify(gRPCUserAgent) : null;
 	let clash_yaml = Clash_原始订阅内容.replace(/mode:\s*Rule\b/g, 'mode: rule');
 
-	const baseDnsBlock = `dns:
+	dns:
   enable: true
+  ipv6: false
+  enhanced-mode: fake-ip
+  fake-ip-range: 198.18.0.1/16
   default-nameserver:
-    - 223.5.5.5
-    - 119.29.29.29
-    - 114.114.114.114
-  use-hosts: true
+    - 1.1.1.1
+    - 8.8.8.8
   nameserver:
-    - https://sm2.doh.pub/dns-query
-    - https://dns.alidns.com/dns-query
-  fallback:
-    - 8.8.4.4
-    - 208.67.220.220
-  fallback-filter:
-    geoip: true
-    geoip-code: CN
-    ipcidr:
-      - 240.0.0.0/4
-      - 127.0.0.1/32
-      - 0.0.0.0/32
-    domain:
-      - '+.google.com'
-      - '+.facebook.com'
-      - '+.youtube.com'
+    - https://1.1.1.1/dns-query
+    - https://8.8.8.8/dns-query
+    - https://1.0.0.1/dns-query
+    - https://8.8.4.4/dns-query
+  proxy-server-nameserver:
+    - 1.1.1.1
+  fallback: [] # 留空，確保不會跳回系統預設或中國 DNS
 `;
 
 	const 添加InlineGrpcUserAgent = (text) => text.replace(/grpc-opts:\s*\{([\s\S]*?)\}/i, (all, inner) => {
@@ -4436,7 +4428,7 @@ async function DoH查询(域名, 记录类型, DoH解析服务 = "https://cloudf
 
 async function 读取config_JSON(env, hostname, userID, UA = "Mozilla/5.0", 重置配置 = false) {
 	const _p = atob("UFJPWFlJUA==");
-	const host = hostname, Ali_DoH = "https://dns.alidns.com/dns-query", ECH_SNI = "cloudflare-ech.com", 占位符 = '{{IP:PORT}}', 初始化开始时间 = performance.now(), 默认配置JSON = {
+	const host = hostname, Ali_DoH = "https://https://cloudflare-dns.com/dns-query/dns-query", ECH_SNI = "cloudflare-ech.com", 占位符 = '{{IP:PORT}}', 初始化开始时间 = performance.now(), 默认配置JSON = {
 		TIME: new Date().toISOString(),
 		HOST: host,
 		HOSTS: [hostname],
